@@ -1,0 +1,74 @@
+Algoritmo BusquedaInterpolar
+	Definir tam Como Entero; //es el tamaño que nosotros le definimos dentro de la ejecución del programa al arreglo. 
+	Definir num Como Entero; //Es el numero a buscar
+	Definir arrayNumeros Como Entero;	//Es el arreglo que almacena los valores que le insertamos durante la ejecucion del programa. 
+	Definir posicion como entero; //Posicion donde se encontro el numero que se pide buscar dentro del arreglo.  
+	Definir max como entero; //Es el tamaño máximo predeterminado y arbitrario que puede tener el arreglo. 
+	
+	max = 1000;
+	Dimension arrayNumeros[max]; //se define el tamaño del arreglo
+	
+	Escribir "Ingrese el tamaño que quiera que tenga el arreglo";
+	Leer tam;
+	Para i <- 0 Hasta tam-1 Con Paso 1 hacer 		//ciclo FOR que pide ingresar todos los valores del arreglo. 
+		Escribir "Inserte el numero del arreglo en la posicion ", i+1;
+		Leer arrayNumeros[i];
+	FinPara
+	
+	Escribir "Ingrese el numero que quiere consultar"	
+	Leer num;	
+	posicion = busquedInterpolar(arrayNumeros,tam,num); //así es como PSEINT convoca a la busqueda interpolar. 
+	Si(posicion >= 0) //si el valor fue encontrado
+		Escribir "Se requirieron esta cantidad de ciclos while ->",posicion+1; //es decir cuantas veces se tuvo que realizar la operación de Búsqueda Interpolar 
+	SiNo
+		Escribir "Número no encontrado";		
+	FinSi
+		
+FinAlgoritmo
+
+Funcion posicion <- busquedInterpolar(arrayNumeros,tam,num) //asi es como se invocan a funciones int en PSEINT. 
+	Definir inf como entero; //es el indice que marca el extremo inferior del rango de la búsqueda Interpolar. 
+	Definir sup como entero; //es el indice que marca el extremo superior del rango de la búsqueda Interpolar. 
+	Definir indicereal como numerico ; //el resultado de esta división es un valor decimal, debido a la división entre los grandes grupos. 
+	Definir indice como entero; //guarda el índice como un valor redondeado para poder ser indexado en alguna posición del arreglo. 
+	Definir posicion como entero; //posicion donde fue encontrado el valor buscado.
+	inf = 0; //se inicializa este indice inferior en el extremo real izquierdo del arreglo.
+	sup = tam - 1; //recordemos que los arreglos empiezan de índice 0, se inicializa este indice superior en el extremo real derecho del arreglo.
+	posicion = -1; //se inicializa así para indicar como si fuera un "flag" o "bandera" que se debe proseguir con la búsqueda interpolar. 
+	
+	ordenInsercion(arrayNumeros,tam); //Para poder usar este búsqueda interpolar se necesita que el arreglo se encuentre previamente ordenado de forma ascendente. 	
+	Mientras (inf <= sup y posicion<0)
+		//Con  la interpolación nos facilita la búsqueda debido a que se calcula un rango de valores dentro de las posiciones del arreglo donde pueda estar el valor a buscar. 
+		indicereal = inf + (((num-arrayNumeros[inf])*(sup-inf))/(arrayNumeros[sup]+arrayNumeros[inf])) ; //esta es la mera interpolación trabajando
+		indice = redon(indicereal); //Se emplea esta función para redondear el valor decimal de indicereal  -- en lenguaje C o C++ esto no es necesario -- el valor se redondea o trunca automaticamente.
+		Si (arrayNumeros[indice] = num) //Si el valor ubicado en el índice sugerido es el mismo que el valor que estamos buscando. 
+			posicion = indice;	//se guarda la posición del índice donde fue encontrado el arreglo. 
+			Escribir "Numero encontrado en la posición: ",posicion; 
+		SiNo
+			Si(num < arrayNumeros[indice]) //si el numero a buscar es menor al número ubicado en el índice propuesto por la interpolación
+				sup = indice - 1;  //el índice superior se va reduciendo, pues no hay nada que buscar más alla de este. 
+			SiNo //si el numero a buscar es menor al número ubicado en el índice propuesto por la interpolación
+				inf = indice + 1; //el índice incrementando se va incrementando, pues nos hemos quedado cortos con la búsqueda y hay que buscar más adelante en el arreglo. 
+			FinSi
+			
+		FinSi		
+	FinMientras	
+FinFuncion
+
+Funcion ordenInsercion(arrayNumeros,tam) //así es como se invocan a funciones Void en PSEINT
+	Definir aux, i , j Como Entero;
+	Para j <- 1 Hasta tam-1 Con Paso 1 hacer 		//con este ciclo "Para" se recorre todo el arreglo con el fin de ordenar de manera ascendente a todos los números.
+		//Este método de ordenar consiste en comparar 2 valores, uno en la posición "i" y otra en la posición "j"
+		i = j - 1; //"i" es la posición del índice que va justo detras de "j" en las comparaciones
+		aux = arrayNumeros[j]; //se almacena siempre en una variable "aux" el valor del arreglo ubicado siempre 1 posición a la derecha dentro de la pareja de índices "i - j"
+		//este valor "aux" es el valor menor entre la pareja que se va a mover a la izquierda. 
+		Mientras (i >= 0 y arrayNumeros[i] > aux)//el ciclo "Mientras" terminará cuando el índice "i"haya llegado a -1 - recorrido todo el arreglo- y se ejecutará siempre que 
+			//los valores arrayNumeros[i > aux cumplan esta comparación
+			arrayNumeros[i+1] = arrayNumeros[i];//harán lo siguiente: recorren el valor que se encuentra en el indice "i" a una posición a la derecha, para cumplir con el orden ascendente.
+			i = i - 1; //Si ocurrió este intercambio, entonces se comienza a recorrer el arreglo hacia atrás, se siguen comparando las parejas de numeros-
+			// hasta llegar al extremo izquierdo - el inicio - , una vez lo logra, el índice "i" vale -1 y se termina este ciclo while 
+		FinMientras
+		arrayNumeros[i+1]= aux; //se necesita que cuando el indice "i" haya terminado de cumplir con el recorrido, deje al valor "aux" en la posición  que quedó disponible. 
+	FinPara
+FinFuncion
+
